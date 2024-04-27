@@ -1,41 +1,28 @@
-#if false
 using Antlr4.Runtime;
-using WinLib.Parser.Json5;
 using System.Reflection;
-using System.Net;
-using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Xml.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
-using Newtonsoft.Json.Linq;
-using System.Text;
-using System.Diagnostics;
-using System.Media;
-using System.Net.NetworkInformation;
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Text;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Diagnostics;
 using System.Linq;
+using System.Media;
 using System.Threading;
+using System.Net.Sockets;
+using WinLib.Parser.Json5;
 using System.Globalization;
-using Esprima.Ast;
 namespace WinLib;
 public class Util
 {
     public static bool DebugFlag = false;
-    public static bool UseCppOut = false;
-    public static System.Threading.Mutex ProcessMutex = new System.Threading.Mutex(false, "ProcessMutex");
+    //public static bool UseCppOut = false;
+    //public static System.Threading.Mutex ProcessMutex = new System.Threading.Mutex(false, "ProcessMutex");
     static Util()
     {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-    }
-    private static dynamic? ParseJson(string json)
-    {
-        return JsonConvert.DeserializeObject(json, new JsonSerializerSettings
-        {
-            DateParseHandling = DateParseHandling.None
-        });
     }
     public static void AllocConsole()
     {
@@ -52,8 +39,7 @@ public class Util
     }
     public static string FindExePath(string exe)
     {
-        string cwd = AssemblyDirectory(typeof(Util).Assembly);
-        //Util.Print(cwd, "cwd");
+        string cwd = "";
         return FindExePath(exe, cwd);
     }
     public static string FindExePath(string exe, string cwd)
@@ -64,7 +50,6 @@ public class Util
             if (!File.Exists(exe)) return null;
             return Path.GetFullPath(exe);
         }
-        //var cwd = Directory.GetCurrentDirectory();
         var PATH = Environment.GetEnvironmentVariable("PATH") ?? "";
         PATH = $"{cwd};{PATH}";
         foreach (string test in PATH.Split(';'))
@@ -79,19 +64,11 @@ public class Util
     {
         int bit = IntPtr.Size * 8;
         string cwd = AssemblyDirectory(assembly);
-        string result = FindExePath(exe, cwd);
+        string result = FindExePath(exe, $"{cwd}\\{bit}bit");
         if (result == null)
         {
+            cwd = Path.Combine(cwd, "assets");
             result = FindExePath(exe, $"{cwd}\\{bit}bit");
-            if (result == null)
-            {
-                cwd = Path.Combine(cwd, "assets");
-                result = FindExePath(exe, cwd);
-                if (result == null)
-                {
-                    result = FindExePath(exe, $"{cwd}\\{bit}bit");
-                }
-            }
         }
         return result;
     }
@@ -145,40 +122,11 @@ public class Util
         }
         return sb.ToString();
     }
-    public static string ToIdentifier(string name)
-    {
-        var sb = new StringBuilder();
-        char last = '\0';
-        for (int i = 0; i < name.Length; i++)
-        {
-            var c = name[i];
-            if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9'))
-            {
-                ;
-            }
-            else
-            {
-                c = '_';
-            }
-            if (last == '_' && c == '_')
-            {
-                ;
-            }
-            else
-            {
-                sb.Append(c);
-            }
-            last = c;
-        }
-        return sb.ToString();
-    }
     public static string[] ExpandWildcard(string path)
     {
         string? dir = Path.GetDirectoryName(path);
         if (string.IsNullOrEmpty(dir)) dir = ".";
-        //Util.Print(dir, "dir");
         string fname = Path.GetFileName(path);
-        //Util.Print(fname, "fname");
         string[] files = Directory.GetFiles(dir, fname);
         List<string> result = new List<string>();
         for (int i = 0; i < files.Length; i++)
@@ -285,7 +233,7 @@ public class Util
     }
     public static bool LaunchProcess(string exePath, string[] args, Dictionary<string, string>? vars = null)
     {
-        ProcessMutex.WaitOne();
+        //ProcessMutex.WaitOne();
         string argList = "";
         for (int i = 0; i < args.Length; i++)
         {
@@ -310,7 +258,7 @@ public class Util
             }
         }
         bool result = process.Start();
-        ProcessMutex.ReleaseMutex();
+        //ProcessMutex.ReleaseMutex();
         return result;
     }
     public static void Beep()
@@ -352,7 +300,7 @@ public class Util
     }
     public static int RunToConsole(string exePath, string[] args, Dictionary<string, string>? vars = null)
     {
-        ProcessMutex.WaitOne();
+        //ProcessMutex.WaitOne();
         string argList = "";
         for (int i = 0; i < args.Length; i++)
         {
@@ -363,7 +311,7 @@ public class Util
                 argList += args[i];
         }
         Process process = new Process();
-        ProcessMutex.ReleaseMutex();
+        //ProcessMutex.ReleaseMutex();
         process.StartInfo.RedirectStandardOutput = true;
         process.StartInfo.RedirectStandardError = true;
         process.StartInfo.UseShellExecute = false;
@@ -424,40 +372,28 @@ public class Util
         l.Stop();
         return port;
     }
-    public static DateTime? AsDateTime(dynamic x)
-    {
-        if (x is null) return null;
-        string fullName = Util.FullName(x);
-        if (fullName == "Newtonsoft.Json.Linq.JValue")
-        {
-            return ((DateTime)x);
-        }
-        else if (fullName == "System.DateTime")
-        {
-            return (System.DateTime)x;
-        }
-        else if (fullName == "System.String")
-        {
-            if (((string)x) == "") return null;
-            return DateTime.Parse((string)x);
-        }
-        else
-        {
-            throw new ArgumentException("x");
-        }
-    }
     public static string FullName(dynamic x)
     {
         if (x is null) return "null";
         string fullName = ((object)x).GetType().FullName;
         return fullName.Split('`')[0];
     }
-    public static string ToJson(dynamic x, bool indent = false)
+    public static string ToJson(object x, bool indent = false)
     {
-        return JsonConvert.SerializeObject(x, indent ? Formatting.Indented : Formatting.None).Replace("\r\n", "\n");
+        string json = x.ToJson();
+        if (indent)
+        {
+            JSONNode node = JSON.Parse(json);
+            json = node.ToString(2);
+        }
+        return json;
     }
-    public static dynamic? FromJson(string json)
+    public static JSONNode FromJson(string json)
     {
+#if false
+        JSONNode node = JSON.Parse(json);
+        return node;
+#else
         if (String.IsNullOrEmpty(json)) return null;
         var inputStream = new AntlrInputStream(json);
         var lexer = new JSON5Lexer(inputStream);
@@ -465,427 +401,41 @@ public class Util
         var parser = new JSON5Parser(commonTokenStream);
         var context = parser.json5();
         return Util.FromObject(JSON5ToObject(context));
+#endif
     }
-
+#if false
     public static dynamic? FromJson(byte[] json)
     {
-        if (json is null) return null;
         return FromJson(Encoding.UTF8.GetString(json));
     }
-
-    public static T? FromJson<T>(string json, T? fallback = default(T))
-    {
-        //if (String.IsNullOrEmpty(json)) return default(T);
-        if (String.IsNullOrEmpty(json)) return fallback;
-        return JsonConvert.DeserializeObject<T>(json);
-    }
-    private static dynamic? JSON5ToObject(ParserRuleContext x)
-    {
-        //Log(Util.FullNamex), "Util.FullNamex)");
-        string fullName = Util.FullName(x);
-#if false
-        switch (fullName)
-        {
-            case "WinLib.Parser.Json5.JSON5Parser+Json5Context":
-                {
-                    for (int i = 0; i < x.children.Count; i++)
-                    {
-                        //Print("  " + Util.FullNamex.children[i]));
-                        //Print("    " + JSON5Terminal((x.children[i])));
-                        if (x.children[i] is Antlr4.Runtime.Tree.ErrorNodeImpl)
-                        {
-                            return null;
-                        }
-                    }
-
-                    return JSON5ToObject((ParserRuleContext)x.children[0]);
-                }
-            case "WinLib.Parser.Json5.JSON5Parser+ValueContext":
-                {
-                    if (x.children[0] is Antlr4.Runtime.Tree.TerminalNodeImpl)
-                    {
-                        string t = JSON5Terminal(x.children[0])!;
-                        if (t.StartsWith("\""))
-                        {
-                            return ParseJson(t);
-                        }
-
-                        if (t.StartsWith("'"))
-                        {
-                            //Log(t, "t");
-                            //t = t.Substring(1, t.Length - 2).Replace("\\'", ",").Replace("\"", "\\\"");
-                            //t = "\"" + t + "\"";
-                            //Log(t, "t");
-                            return ParseJson(t);
-                        }
-
-                        switch (t)
-                        {
-                            case "true":
-                                return true;
-                            case "false":
-                                return false;
-                            case "null":
-                                return null;
-                        }
-
-                        throw new Exception($"Unexpected JSON5Parser+ValueContext: {t}");
-                        //return t;
-                    }
-
-                    return JSON5ToObject((ParserRuleContext)x.children[0]);
-                }
-            case "WinLib.Parser.Json5.JSON5Parser+ArrContext":
-                {
-                    var result = new JArray();
-                    for (int i = 0; i < x.children.Count; i++)
-                    {
-                        //Print("  " + Util.FullNamex.children[i]));
-                        if (x.children[i] is JSON5Parser.ValueContext value)
-                        {
-                            result.Add(JSON5ToObject(value));
-                        }
-                    }
-
-                    return result;
-                }
-            case "WinLib.Parser.Json5.JSON5Parser+ObjContext":
-                {
-                    var result = new JObject();
-                    for (int i = 0; i < x.children.Count; i++)
-                    {
-                        //Print("  " + Util.FullNamex.children[i]));
-                        if (x.children[i] is JSON5Parser.PairContext pair)
-                        {
-                            var pairObj = JSON5ToObject(pair);
-                            result[(string)pairObj!["key"]] = pairObj["value"];
-                        }
-                    }
-
-                    return result;
-                }
-            case "WinLib.Parser.Json5.JSON5Parser+PairContext":
-                {
-                    var result = new JObject();
-                    for (int i = 0; i < x.children.Count; i++)
-                    {
-                        //Print("  " + Util.FullNamex.children[i]));
-                        if (x.children[i] is JSON5Parser.KeyContext key)
-                        {
-                            result["key"] = JSON5ToObject(key);
-                        }
-
-                        if (x.children[i] is JSON5Parser.ValueContext value)
-                        {
-                            result["value"] = JSON5ToObject(value);
-                        }
-                    }
-
-                    return result;
-                }
-            case "WinLib.Parser.Json5.JSON5Parser+KeyContext":
-                {
-                    //string t = JSON5Terminal(x.children[0])!;
-                    if (x.children[0] is Antlr4.Runtime.Tree.TerminalNodeImpl)
-                    {
-                        string t = JSON5Terminal(x.children[0])!;
-                        if (t.StartsWith("\""))
-                        {
-                            return ParseJson(t);
-                        }
-
-                        if (t.StartsWith("'"))
-                        {
-                            //Log(t, "t");
-                            //t = t.Substring(1, t.Length - 2).Replace("\\'", ",").Replace("\"", "\\\"");
-                            //t = "\"" + t + "\"";
-                            //Log(t, "t");
-                            return ParseJson(t);
-                        }
-
-                        return t;
-                    }
-                    else
-                    {
-                        return "?";
-                    }
-                }
-            case "WinLib.Parser.Json5.JSON5Parser+NumberContext":
-                {
-                    return decimal.Parse(JSON5Terminal(x.children[0]), CultureInfo.InvariantCulture);
-                }
-            default:
-                throw new Exception($"Unexpected: {fullName}");
-        }
-#else
-        if (fullName.EndsWith(".JSON5Parser+Json5Context"))
-        {
-            for (int i = 0; i < x.children.Count; i++)
-            {
-                //Print("  " + Util.FullNamex.children[i]));
-                //Print("    " + JSON5Terminal((x.children[i])));
-                if (x.children[i] is Antlr4.Runtime.Tree.ErrorNodeImpl)
-                {
-                    return null;
-                }
-            }
-
-            return JSON5ToObject((ParserRuleContext)x.children[0]);
-        }
-        else if (fullName.EndsWith(".JSON5Parser+ValueContext"))
-        {
-            if (x.children[0] is Antlr4.Runtime.Tree.TerminalNodeImpl)
-            {
-                string t = JSON5Terminal(x.children[0])!;
-                if (t.StartsWith("\""))
-                {
-                    return ParseJson(t);
-                }
-
-                if (t.StartsWith("'"))
-                {
-                    //Log(t, "t");
-                    //t = t.Substring(1, t.Length - 2).Replace("\\'", ",").Replace("\"", "\\\"");
-                    //t = "\"" + t + "\"";
-                    //Log(t, "t");
-                    return ParseJson(t);
-                }
-
-                switch (t)
-                {
-                    case "true":
-                        return true;
-                    case "false":
-                        return false;
-                    case "null":
-                        return null;
-                }
-
-                throw new Exception($"Unexpected JSON5Parser+ValueContext: {t}");
-                //return t;
-            }
-
-            return JSON5ToObject((ParserRuleContext)x.children[0]);
-        }
-        else if (fullName.EndsWith(".JSON5Parser+ArrContext"))
-        {
-            var result = new JArray();
-            for (int i = 0; i < x.children.Count; i++)
-            {
-                //Print("  " + Util.FullNamex.children[i]));
-                if (x.children[i] is JSON5Parser.ValueContext value)
-                {
-                    result.Add(JSON5ToObject(value));
-                }
-            }
-
-            return result;
-        }
-        else if (fullName.EndsWith(".JSON5Parser+ObjContext"))
-        {
-            var result = new JObject();
-            for (int i = 0; i < x.children.Count; i++)
-            {
-                //Print("  " + Util.FullNamex.children[i]));
-                if (x.children[i] is JSON5Parser.PairContext pair)
-                {
-                    var pairObj = JSON5ToObject(pair);
-                    result[(string)pairObj!["key"]] = pairObj["value"];
-                }
-            }
-
-            return result;
-        }
-        else if (fullName.EndsWith(".JSON5Parser+PairContext"))
-        {
-            var result = new JObject();
-            for (int i = 0; i < x.children.Count; i++)
-            {
-                //Print("  " + Util.FullNamex.children[i]));
-                if (x.children[i] is JSON5Parser.KeyContext key)
-                {
-                    result["key"] = JSON5ToObject(key);
-                }
-
-                if (x.children[i] is JSON5Parser.ValueContext value)
-                {
-                    result["value"] = JSON5ToObject(value);
-                }
-            }
-
-            return result;
-        }
-        else if (fullName.EndsWith(".JSON5Parser+KeyContext"))
-        {
-            //string t = JSON5Terminal(x.children[0])!;
-            if (x.children[0] is Antlr4.Runtime.Tree.TerminalNodeImpl)
-            {
-                string t = JSON5Terminal(x.children[0])!;
-                if (t.StartsWith("\""))
-                {
-                    return ParseJson(t);
-                }
-
-                if (t.StartsWith("'"))
-                {
-                    //Log(t, "t");
-                    //t = t.Substring(1, t.Length - 2).Replace("\\'", ",").Replace("\"", "\\\"");
-                    //t = "\"" + t + "\"";
-                    //Log(t, "t");
-                    return ParseJson(t);
-                }
-
-                return t;
-            }
-            else
-            {
-                return "?";
-            }
-        }
-        else if (fullName.EndsWith(".JSON5Parser+NumberContext"))
-        {
-            return decimal.Parse(JSON5Terminal(x.children[0]), CultureInfo.InvariantCulture);
-        }
-        else
-        {
-            throw new Exception($"Unexpected: {fullName}");
-        }
 #endif
-
-        //return null;
-    }
-
-    private static string? JSON5Terminal(Antlr4.Runtime.Tree.IParseTree x)
+    public static T FromJson<T>(string json, T fallback = default(T))
     {
-        if (x is Antlr4.Runtime.Tree.TerminalNodeImpl t)
-        {
-            return t.ToString();
-        }
-
-        return null;
+        T result = json.FromJson<T>();
+        return result;
     }
-    public static byte[] ToBson(dynamic x)
+    public static JSONNode FromObject(object x)
     {
-        MemoryStream ms = new MemoryStream();
-        using (BsonWriter writer = new BsonWriter(ms))
-        {
-            JsonSerializer serializer = new JsonSerializer();
-            serializer.Serialize(writer, x);
-        }
-        return ms.ToArray();
+        if (x is JSONNode) return (JSONNode)x;
+        string json = x.ToJson();
+        return JSON.Parse(json);
     }
-    public static dynamic? FromBson(byte[] bson)
+    public static T FromObject<T>(object x)
     {
-        if (bson is null) return null;
-        MemoryStream ms = new MemoryStream(bson);
-        using (BsonReader reader = new BsonReader(ms))
-        {
-            JsonSerializer serializer = new JsonSerializer();
-            return serializer.Deserialize(reader);
-        }
-    }
-    public static T? FromBson<T>(byte[] bson)
-    {
-        if (bson is null) return default(T);
-        MemoryStream ms = new MemoryStream(bson);
-        using (BsonReader reader = new BsonReader(ms))
-        {
-            JsonSerializer serializer = new JsonSerializer();
-            return serializer.Deserialize<T>(reader);
-        }
-    }
-    public static dynamic? FromObject(dynamic x)
-    {
-        if (x is null) return null;
-        var o = (dynamic)JObject.FromObject(new { x = x },
-                                            new JsonSerializer
-                                            {
-                                                DateParseHandling = DateParseHandling.None
-                                            });
-        return o.x;
-    }
-    public static T? FromObject<T>(dynamic x)
-    {
-        dynamic? o = FromObject(x);
-        if (o is null) return default(T);
-        return (T)(o.ToObject<T>());
-    }
-    public static dynamic? ToNewton(dynamic x)
-    {
-        if (x is null) return null;
-        var o = (dynamic)JObject.FromObject(new { x = x },
-                                            new JsonSerializer
-                                            {
-                                                DateParseHandling = DateParseHandling.None
-                                            });
-        return o.x;
-    }
-    public static T? ToNewton<T>(dynamic x)
-    {
-        dynamic? o = FromObject(x);
-        if (o is null) return default(T);
-        return (T)(o.ToObject<T>());
-    }
-    public static string? ToXml(dynamic x)
-    {
-        if (x is null) return null;
-        if (FullName(x) == "System.Xml.Linq.XElement")
-        {
-            return ((XElement)x).ToString();
-        }
-        XDocument? doc;
-        if (FullName(x) == "System.Xml.Linq.XDocument")
-        {
-            doc = (XDocument)x;
-        }
-        else
-        {
-            string json = ToJson(x);
-            doc = JsonConvert.DeserializeXmlNode(json)?.ToXDocument();
-            //return "<?>";
-        }
-        return doc is null ? "null" : doc.ToStringWithDeclaration();
-    }
-    public static XDocument? FromXml(string xml)
-    {
-        if (xml is null) return null;
-        XDocument doc = XDocument.Parse(xml);
-        return doc;
+        string json = (x is JSONNode) ? ((JSONNode)x).ToString() : x.ToJson();
+        return json.FromJson<T>();
     }
     public static string ToString(dynamic x)
     {
         if (x is null) return "null";
         if (x is string) return (string)x;
-        if (x is Newtonsoft.Json.Linq.JValue)
+        if (x is JSONNode)
         {
-            var value = (JValue)x;
-            try
-            {
-                x = (DateTime)value;
-                //return Util.DateTimeString(x); //x.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz");
-            }
-            catch (Exception)
-            {
-            }
-        }
-        if (x is System.Xml.Linq.XDocument || x is System.Xml.Linq.XElement)
-        {
-            string xml = ToXml(x);
-            return xml;
-        }
-        else if (x is IEnumerable<XElement>)
-        {
-            XElement result = new XElement("IEnumerable");
-            foreach (var e in x)
-            {
-                //string xml = ToXml(e);
-                result.Add(e);
-            }
-            return ToString(result);
+            var value = (JSONNode)x;
+            return value.ToString(2);
         }
         else if (x is System.DateTime)
         {
-            //return x.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz");
             return Util.DateTimeString(x); //x.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz");
         }
         else
@@ -901,34 +451,19 @@ public class Util
             }
         }
     }
-    public static void Print(dynamic x, string? title = null)
+    public static void Echo(object x, string title = null)
     {
         String s = "";
         if (title != null) s = title + ": ";
         s += Util.ToString(x);
-        if (!UseCppOut)
-        {
-            Console.WriteLine(s);
-        }
-        else
-        {
-            DLL0.API.Call("write_to_stdout", new string[] { s });
-        }
-        System.Diagnostics.Debug.WriteLine(s);
+        Console.WriteLine(s);
     }
     public static void Log(dynamic x, string? title = null)
     {
         String s = "";
         if (title != null) s = title + ": ";
         s += Util.ToString(x);
-        if (!UseCppOut)
-        {
-            Console.Error.WriteLine("[Log] " + s);
-        }
-        else
-        {
-            DLL0.API.Call("write_to_stderr", new string[] { "[Log] " + s });
-        }
+        Console.Error.WriteLine("[Log] " + s);
         System.Diagnostics.Debug.WriteLine("[Log] " + s);
     }
     public static void Debug(dynamic x, string? title = null)
@@ -937,20 +472,8 @@ public class Util
         String s = "";
         if (title != null) s = title + ": ";
         s += Util.ToString(x);
-        if (!UseCppOut)
-        {
-            Console.Error.WriteLine("[Debug] " + s);
-        }
-        else
-        {
-            DLL0.API.Call("write_to_stderr", new string[] { "[Debug] " + s });
-        }
+        Console.Error.WriteLine("[Debug] " + s);
         System.Diagnostics.Debug.WriteLine("[Debug] " + s);
-    }
-    public static XDocument ParseXml(string xml)
-    {
-        XDocument doc = XDocument.Parse(xml);
-        return doc;
     }
     public static string[] ResourceNames(Assembly assembly)
     {
@@ -979,7 +502,7 @@ public class Util
     }
     public static byte[] StreamAsBytes(Stream stream)
     {
-        if (stream is null) return null; // new byte[] { };
+        if (stream is null) return null;
         long pos = stream.Position;
         byte[] bytes = new byte[(int)stream.Length];
         stream.Read(bytes, 0, (int)stream.Length);
@@ -1036,80 +559,169 @@ public class Util
                 Util.Log(s, title);
             }
         }
-        /*
-           if (FullName(x) == "System.Xml.Linq.XDocument" ||
-            FullName(x) == "System.Xml.Linq.XElement")
-           {
-            string xml = ToXml(x);
-            System.Diagnostics.Debug.WriteLine(xml);
-            var s = (string)x;
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                NativeMethods.MessageBoxW(IntPtr.Zero, xml, title, 0);
-            }
-            else
-            {
-                Tool.Log(xml, title);
-            }
-           }
-           else
-           {
-            string json = ToJson(x, true);
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                NativeMethods.MessageBoxW(IntPtr.Zero, json, title, 0);
-            }
-            else
-            {
-                Tool.Log(json, title);
-            }
-           }
-         */
     }
-    public static dynamic? FromNewton(dynamic x)
+    public static object ToObject(object x)
     {
-        dynamic? dyn = FromObject(x);
-        return FromNewtonHelper(dyn);
+        JSONNode node = FromObject(x);
+        string json = node.ToString();
+        return json.FromJson<object>();
     }
-    public static dynamic? ToObject(dynamic x)
+    public static T ToObject<T>(object x)
     {
-        dynamic? dyn = FromObject(x);
-        return FromNewtonHelper(dyn);
+        JSONNode node = FromObject(x);
+        string json = node.ToString();
+        return json.FromJson<T>();
     }
-    public static dynamic? ToObject<T>(dynamic x)
+    private static JSONNode JSON5ToObject(ParserRuleContext x)
     {
-        dynamic? o = FromObject(x);
-        if (o is null) return default(T);
-        return (T)(o.ToObject<T>());
-    }
-    private static dynamic? FromNewtonHelper(dynamic? x)
-    {
-        if (x is null) return null;
-        if (x is JArray)
+        //Log(Util.FullNamex), "Util.FullNamex)");
+        string fullName = Util.FullName(x);
+        if (fullName.EndsWith(".JSON5Parser+Json5Context"))
         {
-            var result = new List<object>();
-            var ary = (JArray)x;
-            foreach (var elem in ary)
+            for (int i = 0; i < x.children.Count; i++)
             {
-                result.Add(FromNewtonHelper(elem));
+                //Print("  " + Util.FullNamex.children[i]));
+                //Print("    " + JSON5Terminal((x.children[i])));
+                if (x.children[i] is Antlr4.Runtime.Tree.ErrorNodeImpl)
+                {
+                    return null;
+                }
             }
+
+            return JSON5ToObject((ParserRuleContext)x.children[0]);
+        }
+        else if (fullName.EndsWith(".JSON5Parser+ValueContext"))
+        {
+            if (x.children[0] is Antlr4.Runtime.Tree.TerminalNodeImpl)
+            {
+                string t = JSON5Terminal(x.children[0])!;
+                if (t.StartsWith("\""))
+                {
+                    return ParseJson(t);
+                }
+
+                if (t.StartsWith("'"))
+                {
+                    //Log(t, "t");
+                    t = t.Substring(1, t.Length - 2).Replace("\\'", ",").Replace("\"", "\\\"");
+                    t = "\"" + t + "\"";
+                    //Log(t, "t");
+                    return ParseJson(t);
+                }
+
+                switch (t)
+                {
+                    case "true":
+                        return true;
+                    case "false":
+                        return false;
+                    case "null":
+                        return null;
+                }
+
+                throw new Exception($"Unexpected JSON5Parser+ValueContext: {t}");
+                //return t;
+            }
+
+            return JSON5ToObject((ParserRuleContext)x.children[0]);
+        }
+        else if (fullName.EndsWith(".JSON5Parser+ArrContext"))
+        {
+            var result = new JSONArray();
+            for (int i = 0; i < x.children.Count; i++)
+            {
+                //Print("  " + Util.FullNamex.children[i]));
+                if (x.children[i] is JSON5Parser.ValueContext value)
+                {
+                    result.Add(JSON5ToObject(value));
+                }
+            }
+
             return result;
         }
-        else if (x is JObject)
+        else if (fullName.EndsWith(".JSON5Parser+ObjContext"))
         {
-            var result = new Dictionary<string, object>();
-            var obj = (JObject)x;
-            foreach (var pair in obj)
+            var result = new JSONObject();
+            for (int i = 0; i < x.children.Count; i++)
             {
-                result[pair.Key] = FromNewtonHelper(pair.Value);
+                //Print("  " + Util.FullNamex.children[i]));
+                if (x.children[i] is JSON5Parser.PairContext pair)
+                {
+                    var pairObj = JSON5ToObject(pair);
+                    result[(string)pairObj!["key"]] = pairObj["value"];
+                }
             }
+
             return result;
+        }
+        else if (fullName.EndsWith(".JSON5Parser+PairContext"))
+        {
+            var result = new JSONObject();
+            for (int i = 0; i < x.children.Count; i++)
+            {
+                //Print("  " + Util.FullNamex.children[i]));
+                if (x.children[i] is JSON5Parser.KeyContext key)
+                {
+                    result["key"] = JSON5ToObject(key);
+                }
+
+                if (x.children[i] is JSON5Parser.ValueContext value)
+                {
+                    result["value"] = JSON5ToObject(value);
+                }
+            }
+
+            return result;
+        }
+        else if (fullName.EndsWith(".JSON5Parser+KeyContext"))
+        {
+            //string t = JSON5Terminal(x.children[0])!;
+            if (x.children[0] is Antlr4.Runtime.Tree.TerminalNodeImpl)
+            {
+                string t = JSON5Terminal(x.children[0])!;
+                if (t.StartsWith("\""))
+                {
+                    return ParseJson(t);
+                }
+
+                if (t.StartsWith("'"))
+                {
+                    //Log(t, "t");
+                    t = t.Substring(1, t.Length - 2).Replace("\\'", ",").Replace("\"", "\\\"");
+                    t = "\"" + t + "\"";
+                    //Log(t, "t");
+                    return ParseJson(t);
+                }
+
+                return t;
+            }
+            else
+            {
+                return "?";
+            }
+        }
+        else if (fullName.EndsWith(".JSON5Parser+NumberContext"))
+        {
+            return ParseJson(JSON5Terminal(x.children[0]));
         }
         else
         {
-            var result = (JValue)x;
-            return result.Value;
+            throw new Exception($"Unexpected: {fullName}");
         }
+    }
+
+    private static string? JSON5Terminal(Antlr4.Runtime.Tree.IParseTree x)
+    {
+        if (x is Antlr4.Runtime.Tree.TerminalNodeImpl t)
+        {
+            return t.ToString();
+        }
+
+        return null;
+    }
+    private static JSONNode ParseJson(string json)
+    {
+        return JSON.Parse(json); ;
     }
     internal static class NativeMethods
     {
@@ -1122,4 +734,3 @@ public class Util
         internal static extern uint GetACP();
     }
 }
-#endif

@@ -167,6 +167,12 @@ public static class JSONParser
         if (type == typeof(decimal))
         {
             decimal result;
+#if true
+            if (json.StartsWith("\""))
+            {
+                json = (string)json.FromJson();
+            }
+#endif
             decimal.TryParse(json, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out result);
             return result;
         }
