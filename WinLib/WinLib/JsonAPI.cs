@@ -103,15 +103,17 @@ public class JsonAPI
         }
         return result;
     }
-    public object Call(dynamic name, dynamic args)
+    public dynamic Call(dynamic name, dynamic args)
     {
         return Util.FromJson(CallToJson(name, args));
     }
+#if false
     public dynamic CallToObject(dynamic name, dynamic args)
     {
         var result = Call(name, args);
         return Util.ToObject(result);
     }
+#endif
     static ThreadLocal<IntPtr> HandleCallPtr = new ThreadLocal<IntPtr>();
     static ThreadLocal<IntPtr> HandleLastErrorPtr = new ThreadLocal<IntPtr>();
     public IntPtr HandleCall(Type apiType, IntPtr nameAddr, IntPtr inputAddr)
