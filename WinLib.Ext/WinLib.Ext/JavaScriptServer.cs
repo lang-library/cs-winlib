@@ -66,7 +66,7 @@ public class JavaScriptServer
     }
     public dynamic? GetValueAsNode(string name)
     {
-        return Util.ObjectToNode(GetValue(name));
+        return Util.AsNode(GetValue(name));
     }
     public void Execute(string script, params object[] vars)
     {
@@ -97,7 +97,7 @@ public class JavaScriptServer
     }
     public dynamic? EvaluateAsNode(string script, params object[] vars)
     {
-        return Util.ObjectToNode(Evaluate(script, vars));
+        return Util.AsNode(Evaluate(script, vars));
     }
     public dynamic? Call(string name, params object[] vars)
     {
@@ -118,6 +118,6 @@ public class JavaScriptServer
     }
     public dynamic? CallAsNode(string name, params object[] vars)
     {
-        return Util.ObjectToNode(Call(name, vars));
+        return Util.AsNode(Call(name, vars));
     }
 }

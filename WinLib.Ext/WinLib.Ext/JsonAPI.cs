@@ -110,7 +110,7 @@ public class JsonAPI
     public dynamic CallAsNode(dynamic name, dynamic args)
     {
         var result = Call(name, args);
-        return Util.ObjectToNode(result);
+        return Util.AsNode(result);
     }
     static ThreadLocal<IntPtr> HandleCallPtr = new ThreadLocal<IntPtr>();
     static ThreadLocal<IntPtr> HandleLastErrorPtr = new ThreadLocal<IntPtr>();
@@ -128,7 +128,7 @@ public class JsonAPI
         }
         var name = Util.UTF8AddrToString(nameAddr);
         var input = Util.UTF8AddrToString(inputAddr);
-        var args = Util.ToObject(Util.JsonToNode(input));
+        var args = Util.ToObject(Util.FromJsonAsNode(input));
         MethodInfo mi = apiType.GetMethod(name);
         dynamic result = null;
         if (mi == null)

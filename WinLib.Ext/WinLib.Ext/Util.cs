@@ -392,7 +392,7 @@ public class Util
         }
         return json;
     }
-    public static JSONNode JsonToNode(string json)
+    public static JSONNode FromJsonAsNode(string json)
     {
 #if MINIMAL
         JSONNode node = JSON.Parse(json);
@@ -409,7 +409,7 @@ public class Util
     }
     protected static string PurifyJson(string json)
     {
-        JSONNode node = JsonToNode(json);
+        JSONNode node = FromJsonAsNode(json);
         return node.ToString();
     }
     public static dynamic FromJson(string json)
@@ -423,19 +423,20 @@ public class Util
         T result = json.FromJson<T>();
         return result;
     }
-    public static JSONNode ObjectToNode(object x)
+    public static JSONNode AsNode(object x)
     {
         if (x is JSONNode) return ((JSONNode)x).Clone();
         string json = x.ToJson();
         return JSON.Parse(json);
     }
-    public static dynamic NodeToObject(JSONNode node)
+    public static dynamic AsObject(JSONNode node)
     {
-        return CastObject<object>(node);
+        return As<object>(node);
     }
-    public static T CastObject<T>(object x)
+    public static T As<T>(object x)
     {
-        string json = (x is JSONNode) ? ((JSONNode)x).ToString() : x.ToJson();
+        //string json = (x is JSONNode) ? ((JSONNode)x).ToString() : x.ToJson();
+        string json = ToJson(x);
         return json.FromJson<T>();
     }
     public static string ToString(dynamic x)
@@ -531,12 +532,12 @@ public class Util
     public static dynamic? StreamAsJson(Stream stream)
     {
         string json = StreamAsText(stream);
-        return JsonToNode(json);
+        return FromJsonAsNode(json);
     }
     public static dynamic? ResourceAsNode(Assembly assembly, string name)
     {
         string json = ResourceAsText(assembly, name);
-        return JsonToNode(json);
+        return FromJsonAsNode(json);
     }
     public static byte[]? ToUtf8Bytes(string? s)
     {
@@ -575,13 +576,13 @@ public class Util
     }
     public static object ToObject(object x)
     {
-        JSONNode node = ObjectToNode(x);
+        JSONNode node = AsNode(x);
         string json = node.ToString();
         return json.FromJson<object>();
     }
     public static T ToObject<T>(object x)
     {
-        JSONNode node = ObjectToNode(x);
+        JSONNode node = AsNode(x);
         string json = node.ToString();
         return json.FromJson<T>();
     }
