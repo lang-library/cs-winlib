@@ -161,6 +161,12 @@ public static class JSONParser
         }
         if (type.IsPrimitive)
         {
+#if true
+            if (json.StartsWith("\""))
+            {
+                json = json.FromJson<string>();
+            }
+#endif
             var result = Convert.ChangeType(json, type, System.Globalization.CultureInfo.InvariantCulture);
             return result;
         }
