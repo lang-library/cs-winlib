@@ -16,7 +16,14 @@ public class Busybox
     {
         string busyboxExe = Path.Combine(resDir, "busybox.exe");
         string tempFile = Path.GetTempFileName();
-        DLL1.API.Call("write_all_text_local8bit", new string[] { tempFile, script });
+        if (IntPtr.Size == 8)
+        {
+            File.WriteAllText(tempFile, script);
+        }
+        else
+        {
+            DLL1.API.Call("write_all_text_local8bit", new string[] { tempFile, script });
+        }
         string PATH = Environment.GetEnvironmentVariable("PATH");
         PATH = resDir + ";" + PATH;
         int result = ProcessRunner.RunProcess(windowed, busyboxExe, new string[] { "bash", tempFile }, cwd, new Dictionary<string, string> {
@@ -29,7 +36,14 @@ public class Busybox
     {
         string busyboxExe = Path.Combine(resDir, "busybox.exe");
         string tempFile = Path.GetTempFileName();
-        DLL1.API.Call("write_all_text_local8bit", new string[] { tempFile, script });
+        if (IntPtr.Size == 8)
+        {
+            File.WriteAllText(tempFile, script);
+        }
+        else
+        {
+            DLL1.API.Call("write_all_text_local8bit", new string[] { tempFile, script });
+        }
         string PATH = Environment.GetEnvironmentVariable("PATH");
         PATH = resDir + ";" + PATH;
         bool result = ProcessRunner.LaunchProcess(windowed, busyboxExe, new string[] { "bash", tempFile }, cwd, new Dictionary<string, string> {
@@ -41,7 +55,14 @@ public class Busybox
     {
         string busyboxExe = Path.Combine(resDir, "busybox.exe");
         string tempFile = Path.GetTempFileName();
-        DLL1.API.Call("write_all_text_local8bit", new string[] { tempFile, script });
+        if (IntPtr.Size == 8)
+        {
+            File.WriteAllText(tempFile, script);
+        }
+        else
+        {
+            DLL1.API.Call("write_all_text_local8bit", new string[] { tempFile, script });
+        }
         string PATH = Environment.GetEnvironmentVariable("PATH");
         PATH = resDir + ";" + PATH;
         byte[] bytes = ProcessRunner.ProcessOutputBytes(merge, busyboxExe, new string[] { "bash", tempFile }, cwd, new Dictionary<string, string> {
