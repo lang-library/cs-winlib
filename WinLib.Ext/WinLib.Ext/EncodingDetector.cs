@@ -1,7 +1,8 @@
-﻿using System;
+﻿# if false
+using System;
 using System.Text;
 
-namespace FatWinLib;
+namespace WinLib;
 
 public class EncodingDetector
 {
@@ -35,3 +36,4 @@ public class EncodingDetector
         }
     }
 }
+#endif

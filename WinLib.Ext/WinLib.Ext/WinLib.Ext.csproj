@@ -2,7 +2,7 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <TargetFrameworks>net462</TargetFrameworks>
-    <Version>2024.0421.1617.40</Version>
+    <Version>2024.0427.1811.42</Version>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <RootNamespace>WinLib.Ext</RootNamespace>
@@ -41,13 +41,25 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+    <!--<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />-->
+    <PackageReference Include="LiteDB" Version="5.0.17" />
+    <!--<PackageReference Include="LiteDB" Version="5.0.19" />-->
+    <PackageReference Include="Jint" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.4" />
+    <PackageReference Include="SQLitePCLRaw.core" Version="2.1.8" />
+    <PackageReference Include="SQLitePCLRaw.provider.sqlite3" Version="2.1.8" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="../README.md" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="*.dll" />
     <EmbeddedResource Include="*.zip" />
   </ItemGroup>
+  <!--
   <ItemGroup>
     <ProjectReference Include="..\..\WinLib\WinLib\WinLib.csproj" />
   </ItemGroup>
+  -->
 </Project>

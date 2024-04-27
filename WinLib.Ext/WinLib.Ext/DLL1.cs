@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace FatWinLib;
+namespace WinLib;
 public class DLL1
 {
     public static WinLib.JsonAPI API = null;

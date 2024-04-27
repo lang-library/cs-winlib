@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using static WinLib.JsonAPI;
-namespace FatWinLib;
+namespace WinLib;
 public class ProcessRunner
 {
     static ProcessRunner()

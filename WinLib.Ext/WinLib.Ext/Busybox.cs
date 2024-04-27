@@ -1,11 +1,10 @@
-using FatWinLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 namespace WinLib;
 public class Busybox
 {
-    static string resDir = FatWinLib.Internal.InstallResourceZip("res");
+    static string resDir = WinLib.Ext.Internal.InstallResourceZip("res");
     static Busybox()
     {
     }
@@ -17,10 +16,10 @@ public class Busybox
     {
         string busyboxExe = Path.Combine(resDir, "busybox.exe");
         string tempFile = Path.GetTempFileName();
-        FatWinLib.DLL1.API.Call("write_all_text_local8bit", new string[] { tempFile, script });
+        DLL1.API.Call("write_all_text_local8bit", new string[] { tempFile, script });
         string PATH = Environment.GetEnvironmentVariable("PATH");
         PATH = resDir + ";" + PATH;
-        int result = FatWinLib.ProcessRunner.RunProcess(windowed, busyboxExe, new string[] { "bash", tempFile }, cwd, new Dictionary<string, string> {
+        int result = ProcessRunner.RunProcess(windowed, busyboxExe, new string[] { "bash", tempFile }, cwd, new Dictionary<string, string> {
             { "PATH", PATH }
         });
         File.Delete(tempFile);
@@ -30,10 +29,10 @@ public class Busybox
     {
         string busyboxExe = Path.Combine(resDir, "busybox.exe");
         string tempFile = Path.GetTempFileName();
-        FatWinLib.DLL1.API.Call("write_all_text_local8bit", new string[] { tempFile, script });
+        DLL1.API.Call("write_all_text_local8bit", new string[] { tempFile, script });
         string PATH = Environment.GetEnvironmentVariable("PATH");
         PATH = resDir + ";" + PATH;
-        bool result = FatWinLib.ProcessRunner.LaunchProcess(windowed, busyboxExe, new string[] { "bash", tempFile }, cwd, new Dictionary<string, string> {
+        bool result = ProcessRunner.LaunchProcess(windowed, busyboxExe, new string[] { "bash", tempFile }, cwd, new Dictionary<string, string> {
             { "PATH", PATH }
         }, tempFile);
         return result;
@@ -42,7 +41,7 @@ public class Busybox
     {
         string busyboxExe = Path.Combine(resDir, "busybox.exe");
         string tempFile = Path.GetTempFileName();
-        FatWinLib.DLL1.API.Call("write_all_text_local8bit", new string[] { tempFile, script });
+        DLL1.API.Call("write_all_text_local8bit", new string[] { tempFile, script });
         string PATH = Environment.GetEnvironmentVariable("PATH");
         PATH = resDir + ";" + PATH;
         byte[] bytes = ProcessRunner.ProcessOutputBytes(merge, busyboxExe, new string[] { "bash", tempFile }, cwd, new Dictionary<string, string> {
