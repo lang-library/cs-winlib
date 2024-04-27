@@ -1,9 +1,9 @@
-#if false
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+
 namespace WinLib;
 public class JsonAPI
 {
@@ -86,7 +86,7 @@ public class JsonAPI
         string result = Util.UTF8AddrToString(pResult);
         return result;
     }
-    public dynamic CallToJson(dynamic name, dynamic args)
+    public string CallToJson(dynamic name, dynamic args)
     {
         IntPtr pName = Util.StringToUTF8Addr(name);
         proto_Call pCall = (proto_Call)Marshal.GetDelegateForFunctionPointer(this.CallPtr, typeof(proto_Call));
@@ -103,7 +103,7 @@ public class JsonAPI
         }
         return result;
     }
-    public dynamic Call(dynamic name, dynamic args)
+    public JSONNode Call(dynamic name, dynamic args)
     {
 #if false
         IntPtr pName = Util.StringToUTF8Addr(name);
@@ -145,7 +145,8 @@ public class JsonAPI
         }
         var name = Util.UTF8AddrToString(nameAddr);
         var input = Util.UTF8AddrToString(inputAddr);
-        var args = Util.FromJson(input);
+        //var args = Util.FromJson(input);
+        var args = Util.ToObject(Util.FromJson(input));
         MethodInfo mi = apiType.GetMethod(name);
         dynamic result = null;
         if (mi == null)
@@ -194,4 +195,3 @@ public class JsonAPI
         LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000
     }
 }
-#endif
