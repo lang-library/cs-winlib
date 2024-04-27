@@ -408,7 +408,7 @@ public class Util
         return JSON5ToObject(context);
 #endif
     }
-    public static object FromJson(string json)
+    public static dynamic FromJson(string json)
     {
         return FromJson<object>(json);
     }
