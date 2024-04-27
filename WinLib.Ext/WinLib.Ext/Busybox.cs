@@ -12,6 +12,10 @@ public class Busybox
     {
         ;
     }
+    public static int Run(string script, string cwd = "")
+    {
+        return RunBashScript(false, script, cwd);
+    }
     public static int RunBashScript(bool windowed, string script, string cwd = "")
     {
         string busyboxExe = Path.Combine(resDir, "busybox.exe");
@@ -32,6 +36,11 @@ public class Busybox
         File.Delete(tempFile);
         return result;
     }
+    public static bool Launch(string script, string cwd = "")
+    {
+        return LaunchBashScript(false, script, cwd);
+
+    }
     public static bool LaunchBashScript(bool windowed, string script, string cwd = "")
     {
         string busyboxExe = Path.Combine(resDir, "busybox.exe");
@@ -50,6 +59,10 @@ public class Busybox
             { "PATH", PATH }
         }, tempFile);
         return result;
+    }
+    public static string Output(string script, string cwd = "")
+    {
+        return BashScriptOutput(false, script, cwd);
     }
     public static string BashScriptOutput(bool merge, string script, string cwd = "")
     {

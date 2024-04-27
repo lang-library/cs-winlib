@@ -1,4 +1,6 @@
+#if !MINIMAL
 using Antlr4.Runtime;
+#endif
 using System.Reflection;
 using System;
 using System.IO;

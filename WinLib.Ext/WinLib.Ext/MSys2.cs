@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -91,3 +92,4 @@ public class MSys2
         return result.Trim();
     }
 }
+#endif
