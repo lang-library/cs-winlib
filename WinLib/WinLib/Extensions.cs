@@ -10,33 +10,20 @@ using System.Xml.Linq;
 namespace WinLib;
 public static class Extensions
 {
-#if false
-    public static dynamic? ToNewton(this JsValue x)
-    {
-        if (x == null) return null;
-        var newton = Util.FromObject(x.ToObject());
-        return Util.FromNewton(newton);
-    }
-#else
     public static dynamic? ToJSONNode(this JsValue x)
     {
         if (x == null) return null;
         return Util.FromObject(x.ToObject());
     }
-#endif
     public static void SetTypeReference(this Jint.Engine engine, string name, Type type)
     {
         engine.SetValue(name, Jint.Runtime.Interop.TypeReference.CreateTypeReference(engine, type));
     }
+#if false
     public static dynamic? FromJson(this string x)
     {
         if (x == null) return null;
         return Util.FromJson(x);
-    }
-#if false
-    public static T? FromJson<T>(this string x, T? fallback = default(T))
-    {
-        return Util.FromJson<T>(x, fallback);
     }
 #endif
     public static XmlDocument ToXmlDocument(this XDocument xDocument)
