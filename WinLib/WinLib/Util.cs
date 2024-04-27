@@ -417,7 +417,7 @@ public class Util
         json = PurifyJson(json);
         return FromJson<object>(json);
     }
-    public static T FromJson<T>(string json /*, T fallback = default(T)*/)
+    public static T FromJson<T>(string json)
     {
         json = PurifyJson(json);
         T result = json.FromJson<T>();
@@ -574,6 +574,7 @@ public class Util
             }
         }
     }
+#if false    
     public static object ToObject(object x)
     {
         JSONNode node = AsNode(x);
@@ -586,6 +587,7 @@ public class Util
         string json = node.ToString();
         return json.FromJson<T>();
     }
+#endif
 #if ! MINIMAL
     private static JSONNode JSON5ToObject(ParserRuleContext x)
     {

@@ -77,13 +77,13 @@ public class LiteDBProps
             if (result == null)
             {
                 result = new Prop {
-                    Name = name, Data = ToObject(data)
+                    Name = name, Data = AsObject(data)
                 };
                 collection.Insert(result);
                 connection.Commit();
                 return;
             }
-            result.Data = ToObject(data);
+            result.Data = AsObject(data);
             collection.Update(result);
             connection.Commit();
         }
