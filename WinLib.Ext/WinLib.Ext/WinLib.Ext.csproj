@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <TargetFrameworks>net462</TargetFrameworks>
+    <Version>2024.0421.1617.40</Version>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>WinLib.Ext</RootNamespace>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <NoWarn>3021,0618,8603,0168,8632,8600,8601,8604</NoWarn>
+    <Authors>JavaCommons</Authors>
+    <Company>JavaCommons Technologies</Company>
+    <Product>WinLib.Ext</Product>
+    <Description>FatJaonSLL Library</Description>
+    <Copyright>Copyright © JavaCommons Technologies 2024</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Title>WinLib.Ext Library</Title>
+    <PackageId>WinLib.Ext</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/lang-library/cs-winlib</PackageProjectUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Linq" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="*.dll" />
+    <EmbeddedResource Include="*.zip" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\WinLib\WinLib\WinLib.csproj" />
+  </ItemGroup>
+</Project>

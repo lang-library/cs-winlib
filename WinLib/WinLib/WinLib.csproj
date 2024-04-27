@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <TargetFrameworks>net462</TargetFrameworks>
+    <Version>2024.0427.1617.32</Version>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>WinLib</RootNamespace>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <NoWarn>3021,0618,8603,0168,8632,8600,8601,8604</NoWarn>
+    <Authors>JavaCommons</Authors>
+    <Company>JavaCommons Technologies</Company>
+    <Product>JaonSLL</Product>
+    <Description>JaonSLL Library</Description>
+    <Copyright>Copyright © JavaCommons Technologies 2024</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Title>WinLib Library</Title>
+    <PackageId>WinLib</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/lang-library/cs-winlib</PackageProjectUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Linq" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+    <!--<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />-->
+    <PackageReference Include="LiteDB" Version="5.0.17" />
+    <!--<PackageReference Include="LiteDB" Version="5.0.19" />-->
+    <PackageReference Include="Jint" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.4" />
+    <PackageReference Include="SQLitePCLRaw.core" Version="2.1.8" />
+    <PackageReference Include="SQLitePCLRaw.provider.sqlite3" Version="2.1.8" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="*.dll" />
+    <EmbeddedResource Include="*.zip" />
+  </ItemGroup>
+</Project>
