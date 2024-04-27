@@ -1,4 +1,5 @@
 // https://github.com/Bunny83/SimpleJSON
+#region License and information
 /* * * * *
  * A simple JSON Parser / builder
  * ------------------------------
@@ -34,6 +35,8 @@
  * SOFTWARE.
  * 
  * * * * */
+#endregion License and information
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
