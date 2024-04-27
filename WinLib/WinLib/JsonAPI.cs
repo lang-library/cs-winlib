@@ -130,7 +130,7 @@ public class JsonAPI
         }
         var name = Util.UTF8AddrToString(nameAddr);
         var input = Util.UTF8AddrToString(inputAddr);
-        var args = Util.ToObject(Util.ParseJson(input));
+        var args = Util.ToObject(Util.JsonToNode(input));
         MethodInfo mi = apiType.GetMethod(name);
         dynamic result = null;
         if (mi == null)
