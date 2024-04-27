@@ -4,7 +4,7 @@ using System.IO;
 namespace WinLib;
 public class Busybox
 {
-    static string resDir = WinLib.Ext.Internal.InstallResourceZip("res");
+    static string resDir = Internal.InstallResourceZip("res");
     static Busybox()
     {
     }
