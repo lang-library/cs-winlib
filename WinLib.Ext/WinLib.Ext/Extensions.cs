@@ -13,7 +13,7 @@ public static class Extensions
     public static dynamic? ToNode(this JsValue x)
     {
         if (x == null) return null;
-        return Util.FromObject(x.ToObject());
+        return Util.ObjectToNode(x.ToObject());
     }
     public static void SetTypeReference(this Jint.Engine engine, string name, Type type)
     {

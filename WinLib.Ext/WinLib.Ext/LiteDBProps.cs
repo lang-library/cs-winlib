@@ -61,7 +61,7 @@ public class LiteDBProps
             var result = collection.Find(x => x.Name == name).FirstOrDefault();
             connection.Commit();
             if (result == null) return null;
-            return FromObject(result.Data);
+            return ObjectToNode(result.Data);
         }
     }
     public void Put(string name, dynamic? data)

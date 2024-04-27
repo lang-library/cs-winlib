@@ -423,13 +423,17 @@ public class Util
         T result = json.FromJson<T>();
         return result;
     }
-    public static JSONNode FromObject(object x)
+    public static JSONNode ObjectToNode(object x)
     {
-        if (x is JSONNode) return (JSONNode)x;
+        if (x is JSONNode) return ((JSONNode)x).Clone();
         string json = x.ToJson();
         return JSON.Parse(json);
     }
-    public static T FromObject<T>(object x)
+    public static dynamic NodeToObject(JSONNode node)
+    {
+        return CastObject<object>(node);
+    }
+    public static T CastObject<T>(object x)
     {
         string json = (x is JSONNode) ? ((JSONNode)x).ToString() : x.ToJson();
         return json.FromJson<T>();
@@ -571,13 +575,13 @@ public class Util
     }
     public static object ToObject(object x)
     {
-        JSONNode node = FromObject(x);
+        JSONNode node = ObjectToNode(x);
         string json = node.ToString();
         return json.FromJson<object>();
     }
     public static T ToObject<T>(object x)
     {
-        JSONNode node = FromObject(x);
+        JSONNode node = ObjectToNode(x);
         string json = node.ToString();
         return json.FromJson<T>();
     }

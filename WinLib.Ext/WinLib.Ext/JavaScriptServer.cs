@@ -64,6 +64,10 @@ public class JavaScriptServer
     {
         return engine.GetValue(name).ToObject();
     }
+    public dynamic? GetValueAsNode(string name)
+    {
+        return Util.ObjectToNode(GetValue(name));
+    }
     public void Execute(string script, params object[] vars)
     {
         if (vars is null) vars = new object[] { };
@@ -91,6 +95,10 @@ public class JavaScriptServer
         }
         return result;
     }
+    public dynamic? EvaluateAsNode(string script, params object[] vars)
+    {
+        return Util.ObjectToNode(Evaluate(script, vars));
+    }
     public dynamic? Call(string name, params object[] vars)
     {
         if (vars is null) vars = new object[] { };
@@ -107,5 +115,9 @@ public class JavaScriptServer
             engine.Execute($"delete globalThis.${i + 1};");
         }
         return result;
+    }
+    public dynamic? CallAsNode(string name, params object[] vars)
+    {
+        return Util.ObjectToNode(Call(name, vars));
     }
 }
