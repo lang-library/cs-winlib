@@ -392,7 +392,7 @@ public class Util
         }
         return json;
     }
-    public static JSONNode FromJson(string json)
+    public static JSONNode ParseJson(string json)
     {
 #if MINIMAL
         JSONNode node = JSON.Parse(json);
@@ -404,16 +404,15 @@ public class Util
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new JSON5Parser(commonTokenStream);
         var context = parser.json5();
-        return Util.FromObject(JSON5ToObject(context));
+        //return Util.FromObject(JSON5ToObject(context));
+        return JSON5ToObject(context);
 #endif
     }
-#if false
-    public static dynamic? FromJson(byte[] json)
+    public static object FromJson(string json)
     {
-        return FromJson(Encoding.UTF8.GetString(json));
+        return FromJson<object>(json);
     }
-#endif
-    public static T FromJson<T>(string json, T fallback = default(T))
+    public static T FromJson<T>(string json /*, T fallback = default(T)*/)
     {
         T result = json.FromJson<T>();
         return result;
@@ -522,12 +521,12 @@ public class Util
     public static dynamic? StreamAsJson(Stream stream)
     {
         string json = StreamAsText(stream);
-        return FromJson(json);
+        return ParseJson(json);
     }
     public static dynamic? ResourceAsJson(Assembly assembly, string name)
     {
         string json = ResourceAsText(assembly, name);
-        return FromJson(json);
+        return ParseJson(json);
     }
     public static byte[]? ToUtf8Bytes(string? s)
     {
@@ -725,10 +724,12 @@ public class Util
         return null;
     }
 #endif // ! MINIMAL
+#if false
     private static JSONNode ParseJson(string json)
     {
         return JSON.Parse(json); ;
     }
+#endif
     internal static class NativeMethods
     {
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
