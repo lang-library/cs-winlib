@@ -62,7 +62,7 @@ public class JavaScriptServer
     }
     public dynamic? GetValue(string name)
     {
-        return engine.GetValue(name).ToJSONNode();
+        return engine.GetValue(name).ToObject();
     }
     public void Execute(string script, params object[] vars)
     {
@@ -74,7 +74,6 @@ public class JavaScriptServer
         engine.Execute(script);
         for (int i = 0; i < vars.Length; i++)
         {
-            //SetValue($"${i + 1}", null);
             engine.Execute($"delete globalThis.${i + 1};");
         }
     }
@@ -85,10 +84,9 @@ public class JavaScriptServer
         {
             SetValue($"${i + 1}", vars[i]);
         }
-        var result = engine.Evaluate(script).ToJSONNode();
+        var result = engine.Evaluate(script).ToObject();
         for (int i = 0; i < vars.Length; i++)
         {
-            //SetValue($"${i + 1}", null);
             engine.Execute($"delete globalThis.${i + 1};");
         }
         return result;
@@ -106,7 +104,6 @@ public class JavaScriptServer
         var result = Evaluate(script, vars);
         for (int i = 0; i < vars.Length; i++)
         {
-            //SetValue($"${i + 1}", null);
             engine.Execute($"delete globalThis.${i + 1};");
         }
         return result;

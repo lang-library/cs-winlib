@@ -384,7 +384,7 @@ public class Util
     }
     public static string ToJson(object x, bool indent = false)
     {
-        string json = x.ToJson();
+        string json = (x is JSONNode) ? x.ToString() : x.ToJson();
         if (indent)
         {
             JSONNode node = JSON.Parse(json);
