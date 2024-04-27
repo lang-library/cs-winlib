@@ -10,7 +10,7 @@ using System.Xml.Linq;
 namespace WinLib;
 public static class Extensions
 {
-    public static dynamic? ToJSONNode(this JsValue x)
+    public static dynamic? ToNode(this JsValue x)
     {
         if (x == null) return null;
         return Util.FromObject(x.ToObject());

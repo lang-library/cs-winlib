@@ -392,7 +392,7 @@ public class Util
         }
         return json;
     }
-    public static JSONNode ParseJson(string json)
+    public static JSONNode JsonToNode(string json)
     {
 #if MINIMAL
         JSONNode node = JSON.Parse(json);
@@ -404,16 +404,22 @@ public class Util
         var commonTokenStream = new CommonTokenStream(lexer);
         var parser = new JSON5Parser(commonTokenStream);
         var context = parser.json5();
-        //return Util.FromObject(JSON5ToObject(context));
         return JSON5ToObject(context);
 #endif
     }
+    protected static string PurifyJson(string json)
+    {
+        JSONNode node = JsonToNode(json);
+        return node.ToString();
+    }
     public static dynamic FromJson(string json)
     {
+        json = PurifyJson(json);
         return FromJson<object>(json);
     }
     public static T FromJson<T>(string json /*, T fallback = default(T)*/)
     {
+        json = PurifyJson(json);
         T result = json.FromJson<T>();
         return result;
     }
@@ -521,12 +527,12 @@ public class Util
     public static dynamic? StreamAsJson(Stream stream)
     {
         string json = StreamAsText(stream);
-        return ParseJson(json);
+        return JsonToNode(json);
     }
-    public static dynamic? ResourceAsJson(Assembly assembly, string name)
+    public static dynamic? ResourceAsNode(Assembly assembly, string name)
     {
         string json = ResourceAsText(assembly, name);
-        return ParseJson(json);
+        return JsonToNode(json);
     }
     public static byte[]? ToUtf8Bytes(string? s)
     {
@@ -601,7 +607,7 @@ public class Util
                 string t = JSON5Terminal(x.children[0])!;
                 if (t.StartsWith("\""))
                 {
-                    return ParseJson(t);
+                    return JSON.Parse(t);
                 }
 
                 if (t.StartsWith("'"))
@@ -610,7 +616,7 @@ public class Util
                     t = t.Substring(1, t.Length - 2).Replace("\\'", ",").Replace("\"", "\\\"");
                     t = "\"" + t + "\"";
                     //Log(t, "t");
-                    return ParseJson(t);
+                    return JSON.Parse(t);
                 }
 
                 switch (t)
@@ -685,7 +691,7 @@ public class Util
                 string t = JSON5Terminal(x.children[0])!;
                 if (t.StartsWith("\""))
                 {
-                    return ParseJson(t);
+                    return JSON.Parse(t);
                 }
 
                 if (t.StartsWith("'"))
@@ -694,7 +700,7 @@ public class Util
                     t = t.Substring(1, t.Length - 2).Replace("\\'", ",").Replace("\"", "\\\"");
                     t = "\"" + t + "\"";
                     //Log(t, "t");
-                    return ParseJson(t);
+                    return JSON.Parse(t);
                 }
 
                 return t;
@@ -706,7 +712,7 @@ public class Util
         }
         else if (fullName.EndsWith(".JSON5Parser+NumberContext"))
         {
-            return ParseJson(JSON5Terminal(x.children[0]));
+            return JSON.Parse(JSON5Terminal(x.children[0]));
         }
         else
         {
