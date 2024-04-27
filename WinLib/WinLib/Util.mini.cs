@@ -18,8 +18,8 @@ namespace WinLib;
 public class Util
 {
     public static bool DebugFlag = false;
-    public static bool UseCppOut = false;
-    public static System.Threading.Mutex ProcessMutex = new System.Threading.Mutex(false, "ProcessMutex");
+    //public static bool UseCppOut = false;
+    //public static System.Threading.Mutex ProcessMutex = new System.Threading.Mutex(false, "ProcessMutex");
     static Util()
     {
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
@@ -233,7 +233,7 @@ public class Util
     }
     public static bool LaunchProcess(string exePath, string[] args, Dictionary<string, string>? vars = null)
     {
-        ProcessMutex.WaitOne();
+        //ProcessMutex.WaitOne();
         string argList = "";
         for (int i = 0; i < args.Length; i++)
         {
@@ -258,7 +258,7 @@ public class Util
             }
         }
         bool result = process.Start();
-        ProcessMutex.ReleaseMutex();
+        //ProcessMutex.ReleaseMutex();
         return result;
     }
     public static void Beep()
@@ -300,7 +300,7 @@ public class Util
     }
     public static int RunToConsole(string exePath, string[] args, Dictionary<string, string>? vars = null)
     {
-        ProcessMutex.WaitOne();
+        //ProcessMutex.WaitOne();
         string argList = "";
         for (int i = 0; i < args.Length; i++)
         {
@@ -311,7 +311,7 @@ public class Util
                 argList += args[i];
         }
         Process process = new Process();
-        ProcessMutex.ReleaseMutex();
+        //ProcessMutex.ReleaseMutex();
         process.StartInfo.RedirectStandardOutput = true;
         process.StartInfo.RedirectStandardError = true;
         process.StartInfo.UseShellExecute = false;
@@ -454,28 +454,14 @@ public class Util
         String s = "";
         if (title != null) s = title + ": ";
         s += Util.ToString(x);
-        if (!UseCppOut)
-        {
-            Console.WriteLine(s);
-        }
-        else
-        {
-            DLL0.API.Call("write_to_stdout", new string[] { s });
-        }
+        Console.WriteLine(s);
     }
     public static void Log(dynamic x, string? title = null)
     {
         String s = "";
         if (title != null) s = title + ": ";
         s += Util.ToString(x);
-        if (!UseCppOut)
-        {
-            Console.Error.WriteLine("[Log] " + s);
-        }
-        else
-        {
-            DLL0.API.Call("write_to_stderr", new string[] { "[Log] " + s });
-        }
+        Console.Error.WriteLine("[Log] " + s);
         System.Diagnostics.Debug.WriteLine("[Log] " + s);
     }
     public static void Debug(dynamic x, string? title = null)
@@ -484,14 +470,7 @@ public class Util
         String s = "";
         if (title != null) s = title + ": ";
         s += Util.ToString(x);
-        if (!UseCppOut)
-        {
-            Console.Error.WriteLine("[Debug] " + s);
-        }
-        else
-        {
-            DLL0.API.Call("write_to_stderr", new string[] { "[Debug] " + s });
-        }
+        Console.Error.WriteLine("[Debug] " + s);
         System.Diagnostics.Debug.WriteLine("[Debug] " + s);
     }
     public static string[] ResourceNames(Assembly assembly)
