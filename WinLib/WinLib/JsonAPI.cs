@@ -86,7 +86,7 @@ public class JsonAPI
         string result = Util.UTF8AddrToString(pResult);
         return result;
     }
-    public string CallToJson(dynamic name, dynamic args)
+    public string CallAsJson(dynamic name, dynamic args)
     {
         IntPtr pName = Util.StringToUTF8Addr(name);
         proto_Call pCall = (proto_Call)Marshal.GetDelegateForFunctionPointer(this.CallPtr, typeof(proto_Call));
@@ -105,15 +105,13 @@ public class JsonAPI
     }
     public dynamic Call(dynamic name, dynamic args)
     {
-        return Util.FromJson(CallToJson(name, args));
+        return Util.FromJson(CallAsJson(name, args));
     }
-#if false
-    public dynamic CallToObject(dynamic name, dynamic args)
+    public dynamic CallAsNode(dynamic name, dynamic args)
     {
         var result = Call(name, args);
-        return Util.ToObject(result);
+        return Util.ObjectToNode(result);
     }
-#endif
     static ThreadLocal<IntPtr> HandleCallPtr = new ThreadLocal<IntPtr>();
     static ThreadLocal<IntPtr> HandleLastErrorPtr = new ThreadLocal<IntPtr>();
     public IntPtr HandleCall(Type apiType, IntPtr nameAddr, IntPtr inputAddr)
