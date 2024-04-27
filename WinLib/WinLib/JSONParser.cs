@@ -170,7 +170,7 @@ public static class JSONParser
 #if true
             if (json.StartsWith("\""))
             {
-                json = (string)json.FromJson();
+                json = json.FromJson<string>();
             }
 #endif
             decimal.TryParse(json, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out result);

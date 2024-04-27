@@ -1,6 +1,6 @@
 using System;
 using System.Windows.Forms;
-namespace WinLib;
+namespace NAMESPACE;
 public class ApplicationIdleTimer
 {
     public static MessageFilter Filter;

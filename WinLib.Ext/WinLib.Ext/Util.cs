@@ -12,7 +12,9 @@ using System.Linq;
 using System.Media;
 using System.Threading;
 using System.Net.Sockets;
+#if !MINIMAL
 using WinLib.Parser.Json5;
+#endif
 using System.Globalization;
 namespace WinLib;
 public class Util
@@ -390,7 +392,7 @@ public class Util
     }
     public static JSONNode FromJson(string json)
     {
-#if false
+#if MINIMAL
         JSONNode node = JSON.Parse(json);
         return node;
 #else
@@ -572,6 +574,7 @@ public class Util
         string json = node.ToString();
         return json.FromJson<T>();
     }
+#if ! MINIMAL
     private static JSONNode JSON5ToObject(ParserRuleContext x)
     {
         //Log(Util.FullNamex), "Util.FullNamex)");
@@ -719,6 +722,7 @@ public class Util
 
         return null;
     }
+#endif // ! MINIMAL
     private static JSONNode ParseJson(string json)
     {
         return JSON.Parse(json); ;

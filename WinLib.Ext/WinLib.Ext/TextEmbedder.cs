@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using static WinLib.Util;
 namespace WinLib;
 public static class TextEmbedder
 {
@@ -140,7 +139,7 @@ public static class TextEmbedder
         }
         catch (Exception e)
         {
-            Log(e.ToString());
+            Util.Log(e.ToString());
             return null;
         }
     }
@@ -169,7 +168,7 @@ public static class TextEmbedder
         }
         catch (Exception e)
         {
-            Log(e.ToString());
+            Util.Log(e.ToString());
             return 0;
         }
     }
@@ -182,7 +181,7 @@ public static class TextEmbedder
         }
         catch (Exception e)
         {
-            Log(e.ToString());
+            Util.Log(e.ToString());
             return null;
         }
     }

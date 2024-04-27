@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System;
 using System.Text;
 using System.Security.Cryptography;
-using static WinLib.JsonAPI;
 namespace WinLib;
 internal static class WinConsole
 {
