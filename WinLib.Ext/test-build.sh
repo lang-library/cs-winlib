@@ -14,10 +14,11 @@ dotnet pack -o . -p:Configuration=Release -p:Platform="Any CPU" WinLib.Ext.cspro
 
 exit 0
 
+tag="WinLib.Ext-v$version"
 cd $cwd
 git add .
-git commit -m"WinLib.Ext v$version"
-git tag -a v$ts -mv$version
-git push origin v$version
+git commit -m"$tag"
+git tag -a "$tag" -m"$tag"
+git push origin "$tag"
 git push
 git remote -v
