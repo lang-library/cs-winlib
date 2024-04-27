@@ -420,7 +420,7 @@ public class Util
     }
     public static T FromObject<T>(object x)
     {
-        string json = x.ToJson();
+        string json = (x is JSONNode) ? ((JSONNode)x).ToString() : x.ToJson();
         return json.FromJson<T>();
     }
     public static string ToString(dynamic x)
