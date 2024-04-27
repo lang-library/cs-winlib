@@ -18,7 +18,7 @@ tag="WinLib.Ext v$version"
 cd $cwd
 git add .
 git commit -m"$tag"
-git tag -a v"$tag" -m"$tag"
+git tag -a "$tag" -m"$tag"
 git push origin "$tag"
 git push
 git remote -v
